@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://bn15c3bj4x8dv"]
+
+[ext_resource type="Texture2D" uid="uid://bnxcxjtuuf5bh" path="res://textures/Hexagon.png" id="1_xxhlf"]
+[ext_resource type="Texture2D" uid="uid://x5gwcj208ctp" path="res://textures/HexagonFrame.png" id="2_mfnjn"]
+[ext_resource type="Texture2D" uid="uid://dmfr34vqghv8p" path="res://textures/HexagonBadge.png" id="3_y635g"]
+
+[node name="BGTile" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.0768358, 0.0768358, 0.0768358, 1)
+texture = ExtResource("1_xxhlf")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+modulate = Color(0.111197, 0.111197, 0.111197, 1)
+texture = ExtResource("2_mfnjn")
+
+[node name="Sprite2D3" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("3_y635g")

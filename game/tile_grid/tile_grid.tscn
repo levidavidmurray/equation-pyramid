@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://lffwyiggjkix"]
+
+[ext_resource type="Script" uid="uid://y8745w8m6jji" path="res://game/tile_grid/tile_grid.gd" id="1_7b528"]
+[ext_resource type="PackedScene" uid="uid://bn15c3bj4x8dv" path="res://game/tile_grid/bg_tile.tscn" id="2_u7gm5"]
+
+[node name="TileGrid" type="Node2D"]
+script = ExtResource("1_7b528")
+bg_tile_scene = ExtResource("2_u7gm5")
+rows = 20
+columns = 20
+tile_size = 466.0
+row_y_offset = -60.0

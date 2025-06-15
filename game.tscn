@@ -1,10 +1,106 @@
-[gd_scene load_steps=2 format=3 uid="uid://bcqwrdmwvv86k"]
+[gd_scene load_steps=11 format=3 uid="uid://bcqwrdmwvv86k"]
 
-[ext_resource type="PackedScene" uid="uid://2a1sbxvypojt" path="res://pyramid/pyramid.tscn" id="1_80nbo"]
+[ext_resource type="PackedScene" uid="uid://2a1sbxvypojt" path="res://game/pyramid/pyramid.tscn" id="1_80nbo"]
+[ext_resource type="PackedScene" uid="uid://lffwyiggjkix" path="res://game/tile_grid/tile_grid.tscn" id="1_e2o6t"]
+[ext_resource type="Shader" uid="uid://cnrggtlg0ud3l" path="res://shaders/mask_texture.gdshader" id="1_feb5d"]
+
+[sub_resource type="Gradient" id="Gradient_feb5d"]
+colors = PackedColorArray(0, 0, 0, 1, 0.0784314, 0.0784314, 0.0784314, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fc0e3"]
+gradient = SubResource("Gradient_feb5d")
+width = 1080
+height = 1080
+fill = 1
+fill_from = Vector2(0.512821, 0.547009)
+fill_to = Vector2(0.512821, 0)
+
+[sub_resource type="Gradient" id="Gradient_fc0e3"]
+offsets = PackedFloat32Array(0.672451, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_7jktm"]
+gradient = SubResource("Gradient_fc0e3")
+width = 1920
+height = 1920
+fill = 1
+fill_from = Vector2(0.5, 0.504274)
+fill_to = Vector2(0.482906, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ryrav"]
+shader = ExtResource("1_feb5d")
+shader_parameter/mask_texture = SubResource("GradientTexture2D_7jktm")
+shader_parameter/mask_scale = Vector2(1, 1)
+shader_parameter/mask_offset = Vector2(0, 0)
+
+[sub_resource type="Gradient" id="Gradient_e2o6t"]
+offsets = PackedFloat32Array(0.598377, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0.0605303, 0.0605303, 0.0605303, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_feb5d"]
+gradient = SubResource("Gradient_e2o6t")
+width = 1080
+height = 1080
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.491453, 0)
 
 [node name="Game" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
+[node name="TextureRect2" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(1920, 1920)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -960.0
+offset_top = -960.0
+offset_right = 960.0
+offset_bottom = 960.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(960, 960)
+texture = SubResource("GradientTexture2D_fc0e3")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+material = SubResource("ShaderMaterial_ryrav")
+custom_minimum_size = Vector2(1920, 1080)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="TileGrid" parent="SubViewportContainer/SubViewport" instance=ExtResource("1_e2o6t")]
+position = Vector2(1005, 552)
+scale = Vector2(0.383, 0.383)
+row_y_offset = -63.15
+
 [node name="Pyramid" parent="." instance=ExtResource("1_80nbo")]
 scale = Vector2(0.382537, 0.382537)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+visible = false
+custom_minimum_size = Vector2(1920, 1920)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -960.0
+offset_top = -960.0
+offset_right = 960.0
+offset_bottom = 960.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(960, 960)
+texture = SubResource("GradientTexture2D_feb5d")

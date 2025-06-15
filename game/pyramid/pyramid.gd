@@ -38,9 +38,43 @@ func _unhandled_input(event):
 				_unselect_tile(hovered_tile)
 			else:
 				_select_tile(hovered_tile)
+		else:
+			_unselect_tiles() # Unselect all tiles if clicked outside
 	if event is InputEventKey and event.is_pressed():
 		if event.keycode == KEY_P:
 			_create_pyramid()
+		if event.keycode == KEY_ESCAPE:
+			_unselect_tiles()
+			var t1 = Tile.MTileData.new(5, Tile.Operation.ADD)
+			var t2 = Tile.MTileData.new(3, Tile.Operation.SUBTRACT)
+			var t3 = Tile.MTileData.new(2, Tile.Operation.MULTIPLY)
+			var triplet = _find_valid_triplet(10)
+			if not triplet.is_empty():
+				# print("%s %s %s" % [triplet[0], triplet[1], triplet[2]])
+				pass
+			else:
+				print("No valid triplet found")
+
+
+func _find_valid_triplet(target: int) -> Array[Tile.MTileData]:
+	var attempts = 500
+	while attempts > 0:
+		var a = randi_range(1, 9)
+		var b = randi_range(1, 9)
+		var c = randi_range(1, 9)
+		var op1 = randi_range(0, 3) as Tile.Operation
+		var op2 = randi_range(0, 3) as Tile.Operation
+		var tile1 = Tile.MTileData.new(a, op1)
+		var tile2 = Tile.MTileData.new(b, op2)
+		var tile3 = Tile.MTileData.new(c, Tile.Operation.ADD) # Always add the third tile
+		var tiles = [tile1, tile2, tile3] as Array[Tile.MTileData]
+		var result = _evaluate_tiles(tiles)
+		if result == target:
+			print("[%s] Found valid triplet: %s %s %s" % [attempts, tile1, tile2, tile3])
+			return tiles
+
+		attempts -= 1
+	return []
 
 
 func _select_tile(tile: Tile):
@@ -59,26 +93,49 @@ func _unselect_tile(tile: Tile):
 		AudioManager.play_stream(tile.sfx_hover, -10.0, 0.8)
 
 
+func _unselect_tiles():
+	for tile in selected_tiles:
+		tile.is_selected = false
+		tile.disabled = false
+	selected_tiles.clear()
+
+
+func _tiles_to_tile_data(_tiles: Array[Tile]) -> Array[Tile.MTileData]:
+	var tile_data := [] as Array[Tile.MTileData]
+	for tile in _tiles:
+		tile_data.append(tile.data)
+	return tile_data
+
+
+func _create_tile(value: int, operation: Tile.Operation) -> Tile:
+	var tile = tile_scene.instantiate() as Tile
+	tile.data = Tile.MTileData.new(value, operation)
+	tile.position = Vector2.ZERO # Default position, can be adjusted later
+	add_child(tile)
+	return tile
+
+
 func _submit_equation():
 	if selected_tiles.size() < 2:
 		return # Not enough tiles selected
 
-	for tile in selected_tiles:
+	for tile in tiles:
 		tile.collider.disabled = true
 
-	var equation_str = _get_equation_string(selected_tiles)
-	var result = _evaluate_tiles_md_as(selected_tiles)
+	var tile_data = _tiles_to_tile_data(selected_tiles)
+	var result = _evaluate_tiles(tile_data)
+	var equation_str = _get_equation_string(tile_data)
 	print("Equation: %s = %s" % [equation_str, result])
 
 	await G.wait(0.5)
 
-	for tile in selected_tiles:
+	for tile in tiles:
 		tile.is_selected = false
 		tile.disabled = false
 	selected_tiles.clear() # Clear selection after submission
 
 
-func _evaluate_tiles_md_as(tiles: Array[Tile]) -> float:
+func _evaluate_tiles(tiles: Array[Tile.MTileData]) -> float:
 	var first_value = tiles[0].value
 	if tiles[0].operation == Tile.Operation.SUBTRACT:
 		first_value = - first_value # Adjust first value for subtraction
@@ -119,22 +176,22 @@ func _evaluate_tiles_md_as(tiles: Array[Tile]) -> float:
 	return values[0]
 
 
-func _get_equation_string(tiles: Array[Tile]) -> String:
-	var first_value = tiles[0].value
-	if tiles[0].operation == Tile.Operation.SUBTRACT:
+func _get_equation_string(_tiles: Array[Tile.MTileData]) -> String:
+	var first_value = _tiles[0].value
+	if _tiles[0].operation == Tile.Operation.SUBTRACT:
 		first_value = - first_value # Adjust first value for subtraction
-	var str := str(first_value)
-	for i in range(1, tiles.size()):
-		str += " %s %s" % [Tile.operation_str(tiles[i].operation), str(tiles[i].value)]
-	return str
+	var s := str(first_value)
+	for i in range(1, _tiles.size()):
+		s += " %s %s" % [Tile.operation_str(_tiles[i].operation), str(_tiles[i].value)]
+	return s
 
 
 func _set_tile_values():
 	for tile in tiles:
-		var operation = randi_range(0, Tile.Operation.size() - 1) as Tile.Operation
 		var value = randi_range(1, 10)
-		tile.operation = operation
-		tile.value = value
+		var operation = randi_range(0, Tile.Operation.size() - 1) as Tile.Operation
+		var data = Tile.MTileData.new(value, operation)
+		tile.data = data
 
 
 func _animate_tiles_enter():
@@ -153,8 +210,6 @@ func _animate_tiles_enter():
 		tween.tween_property(tile, "scale", Vector2.ONE * 0.9, time).set_delay(delay)
 		tween.tween_property(tile, "modulate:a", 1.0, time).set_delay(delay)
 		tween.tween_property(tile, "scale", Vector2.ONE, time).set_delay(delay + time)
-		# tween.tween_property(tile, "position", orig_pos + Vector2(0, 100.0), 0.15).set_delay(delay)
-		# tween.tween_property(tile, "position", orig_pos, time).set_delay(delay + 0.15)
 
 	await G.wait(1.0)
 

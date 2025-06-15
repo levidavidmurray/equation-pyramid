@@ -9,6 +9,18 @@ enum Operation {
 	DIVIDE
 }
 
+class MTileData:
+	var value: int
+	var operation: Operation
+
+	func _init(_value: int, _operation: Operation):
+		value = _value
+		operation = _operation
+
+	func _to_string():
+		return "%s%s" % [Tile.operation_str(operation), str(value)]
+
+
 @export var value: int = 0:
 	set(_value):
 		value = _value
@@ -55,6 +67,11 @@ enum Operation {
 @export var is_hovered: bool = false:
 	set(value):
 		is_hovered = value
+
+var data: MTileData:
+	set(value):
+		data = value
+		_update_label()
 
 var disabled = false:
 	set(value):
@@ -111,7 +128,11 @@ func _set_visual_targets():
 func _update_label():
 	if not is_inside_tree():
 		return
-	value_label.text = "%s%s" % [operation_str(operation), str(value)]
+	if not data:
+		value_label.hide()
+	else:
+		value_label.show()
+		value_label.text = str(data)
 
 
 static func operation_str(_operation) -> String:
