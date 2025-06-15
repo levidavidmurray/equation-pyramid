@@ -77,7 +77,30 @@ func _find_valid_triplet(target: int) -> Array[Tile.MTileData]:
 	return []
 
 
+func _validate_selection(tile: Tile) -> bool:
+	if selected_tiles.is_empty():
+		return true
+	var last_tile = selected_tiles[selected_tiles.size() - 1]
+	# ensure the new tile is a neighbor of the last selected tile
+	for hex_dir in last_tile.neighbors.keys():
+		if last_tile.neighbors[hex_dir] == tile:
+			return true
+	return false
+
+
 func _select_tile(tile: Tile):
+	print("Select Tile: %s" % tile.data)
+	for hex_dir in tile.neighbors.keys():
+		var neighbor = tile.neighbors[hex_dir]
+		var hex_dir_str = Tile.HEX_DIR.keys()[hex_dir]
+		print("Neighbor (%s): %s" % [hex_dir_str, neighbor.data])
+	
+	if not _validate_selection(tile):
+		print("Invalid selection: %s is not a neighbor of the last selected tile." % tile.data)
+		_unselect_tiles()
+		_select_tile(tile) # Re-select the tile to reset selection
+		return
+
 	if not tile in selected_tiles:
 		tile.is_selected = true
 		selected_tiles.append(tile)
@@ -250,5 +273,24 @@ func _create_pyramid():
 			tiles.append(tile)
 
 
+	_build_neighbors()
 	_set_tile_values()
 	_animate_tiles_enter()
+
+
+func _build_neighbors():
+	for tile in tiles:
+		tile.neighbors.clear() # Clear existing neighbors
+		var pos = tile.position
+		for other in tiles:
+			if tile == other:
+				continue
+			var other_pos = other.position
+			if pos.distance_to(other_pos) <= tile_size * 1.5: # Adjust distance threshold as needed
+				var dir = pos.direction_to(other_pos)
+				var hex_dir = Tile.get_closest_hex_dir(dir)
+				if tile.neighbors.has(hex_dir):
+					continue # Already has a neighbor in this direction
+				else:
+					tile.neighbors[hex_dir] = other
+					other.neighbors[Tile.invert_hex_dir(hex_dir)] = tile # Ensure bidirectional relationship

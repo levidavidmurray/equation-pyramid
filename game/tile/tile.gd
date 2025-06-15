@@ -9,6 +9,58 @@ enum Operation {
 	DIVIDE
 }
 
+enum HEX_DIR {
+	RIGHT,
+	LEFT,
+	UP_RIGHT,
+	UP_LEFT,
+	DOWN_RIGHT,
+	DOWN_LEFT
+}
+
+const HEX_DIR_RIGHT = Vector2(1, 0)
+const HEX_DIR_LEFT = Vector2(-1, 0)
+const HEX_DIR_UP_RIGHT = Vector2(0.5, -0.866)
+const HEX_DIR_UP_LEFT = Vector2(-0.5, -0.866)
+const HEX_DIR_DOWN_RIGHT = Vector2(0.5, 0.866)
+const HEX_DIR_DOWN_LEFT = Vector2(-0.5, 0.866)
+
+static var HEX_DIRS = [
+	HEX_DIR_RIGHT,
+	HEX_DIR_LEFT,
+	HEX_DIR_UP_RIGHT,
+	HEX_DIR_UP_LEFT,
+	HEX_DIR_DOWN_RIGHT,
+	HEX_DIR_DOWN_LEFT
+]
+
+static func get_closest_hex_dir(dir: Vector2) -> HEX_DIR:
+	var closest_dir = HEX_DIR.RIGHT
+	var closest_angle = dir.angle()
+	for i in range(HEX_DIRS.size()):
+		var angle = HEX_DIRS[i].angle()
+		var angle_diff = abs(angle - closest_angle)
+		if angle_diff < abs(HEX_DIRS[closest_dir].angle() - closest_angle):
+			closest_dir = i
+	return closest_dir
+
+static func invert_hex_dir(hex_dir: HEX_DIR) -> HEX_DIR:
+	match hex_dir:
+		HEX_DIR.RIGHT:
+			return HEX_DIR.LEFT
+		HEX_DIR.LEFT:
+			return HEX_DIR.RIGHT
+		HEX_DIR.UP_RIGHT:
+			return HEX_DIR.DOWN_LEFT
+		HEX_DIR.UP_LEFT:
+			return HEX_DIR.DOWN_RIGHT
+		HEX_DIR.DOWN_RIGHT:
+			return HEX_DIR.UP_LEFT
+		HEX_DIR.DOWN_LEFT:
+			return HEX_DIR.UP_RIGHT
+		_:
+			return hex_dir # Default case, should not happen
+
 class MTileData:
 	var value: int
 	var operation: Operation
@@ -80,6 +132,8 @@ var disabled = false:
 			collider.disabled = value
 
 var tween: Tween
+
+var neighbors: Dictionary[HEX_DIR, Tile] = {}
 
 var target_scale: Vector2
 var target_sprite_color: Color
