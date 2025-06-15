@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcqwrdmwvv86k"]
+
+[ext_resource type="PackedScene" uid="uid://2a1sbxvypojt" path="res://pyramid/pyramid.tscn" id="1_80nbo"]
+
+[node name="Game" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Pyramid" parent="." instance=ExtResource("1_80nbo")]
+scale = Vector2(0.382537, 0.382537)

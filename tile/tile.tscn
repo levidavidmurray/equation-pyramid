@@ -1,0 +1,79 @@
+[gd_scene load_steps=11 format=3 uid="uid://o7ocx6r83myt"]
+
+[ext_resource type="Script" uid="uid://dr3nk6jjx4f3o" path="res://tile/tile.gd" id="1_btt4l"]
+[ext_resource type="Texture2D" uid="uid://bnxcxjtuuf5bh" path="res://textures/Hexagon.png" id="1_su6p1"]
+[ext_resource type="AudioStream" uid="uid://dptu1ei0y26dl" path="res://sfx/Scroll Shuffle High Single.wav" id="2_f32e7"]
+[ext_resource type="FontFile" uid="uid://c82wyue3yn8bq" path="res://fonts/InterVariable.ttf" id="3_mc7i4"]
+[ext_resource type="Texture2D" uid="uid://x5gwcj208ctp" path="res://textures/HexagonFrame.png" id="4_cjm3e"]
+[ext_resource type="Texture2D" uid="uid://dmfr34vqghv8p" path="res://textures/HexagonBadge.png" id="5_licmu"]
+
+[sub_resource type="FontVariation" id="FontVariation_f32e7"]
+base_font = ExtResource("3_mc7i4")
+variation_embolden = 0.88
+
+[sub_resource type="LabelSettings" id="LabelSettings_ecbr6"]
+font = SubResource("FontVariation_f32e7")
+font_size = 211
+
+[sub_resource type="FontVariation" id="FontVariation_cjm3e"]
+base_font = ExtResource("3_mc7i4")
+variation_embolden = 0.45
+
+[sub_resource type="LabelSettings" id="LabelSettings_licmu"]
+font = SubResource("FontVariation_cjm3e")
+font_size = 68
+
+[node name="Tile" type="Area2D"]
+scale = Vector2(0.96, 0.96)
+script = ExtResource("1_btt4l")
+operation = 2
+sfx_hover = ExtResource("2_f32e7")
+hover_sprite_color = Color(0.620675, 0.68274, 0.67171, 1)
+selected_sprite_color = Color(0.473393, 0.537747, 0.525861, 1)
+base_frame_color = Color(0.784314, 0.827451, 0.819608, 1)
+hovered_frame_color = Color(0.499609, 0.566287, 0.55283, 1)
+selected_frame_color = Color(0.369766, 0.426719, 0.416823, 1)
+hover_label_color = Color(0, 0, 0, 1)
+base_badge_color = Color(0.329412, 0.4, 0.427451, 1)
+hovered_badge_color = Color(0.811521, 0.876286, 0.91989, 1)
+is_selected = true
+
+[node name="SpriteTile" type="Sprite2D" parent="."]
+modulate = Color(0.473393, 0.537747, 0.525861, 1)
+texture = ExtResource("1_su6p1")
+
+[node name="Frame" type="Node2D" parent="."]
+modulate = Color(0.369766, 0.426719, 0.416823, 1)
+
+[node name="SpriteFrame" type="Sprite2D" parent="Frame"]
+unique_name_in_owner = true
+texture = ExtResource("4_cjm3e")
+
+[node name="SpriteBadge" type="Sprite2D" parent="Frame"]
+unique_name_in_owner = true
+texture = ExtResource("5_licmu")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+visible = false
+polygon = PackedVector2Array(17, -246.8, -4.10001, -249, -6, -249, -6, -247.6, -17, -245, -20.6, -245, -33.5, -237, -35.5, -237, -194.5, -144, -196.8, -144, -204.7, -137, -207.1, -137, -213.1, -128, -214.5, -128, -220.5, -109, -222, -109, -222, 107.4, -215, 124.3, -215, 126.9, -200, 140.9, -200, 142.2, -32, 238.1, -32, 239.4, -4.3, 249, 4.39999, 249, 26.4, 241, 28.5, 241, 194.5, 144, 196.8, 144, 204.7, 137, 207.1, 137, 213.1, 128, 214.5, 128, 220.5, 109, 222, 109, 222, -107.4, 215, -124.4, 215, -126.9, 200, -141, 200, -142.2, 32, -238.2, 32, -239.4, 17, -245.4)
+
+[node name="ValueLabel" type="Label" parent="."]
+modulate = Color(0, 0, 0, 1)
+offset_left = -223.0
+offset_top = -127.0
+offset_right = 223.0
+offset_bottom = 129.0
+text = "×0"
+label_settings = SubResource("LabelSettings_ecbr6")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BadgeLabel" type="Label" parent="."]
+offset_left = -223.0
+offset_top = -320.0
+offset_right = 223.0
+offset_bottom = -64.0
+text = "A"
+label_settings = SubResource("LabelSettings_licmu")
+horizontal_alignment = 1
+vertical_alignment = 1
